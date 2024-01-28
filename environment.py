@@ -62,7 +62,7 @@ class SNAKEGAME:
         if self.food in self.snake:
             self._create_food()
 
-    def _has_collided(self):
+    def has_collided(self):
         return (self.snakeHead.x < 0 or self.snakeHead.x > self.width - BLOCK_SIZE or
                 self.snakeHead.y < 0 or self.snakeHead.y > self.height - BLOCK_SIZE
                 or self.snakeHead in self.snake[1:])
@@ -96,19 +96,19 @@ class SNAKEGAME:
 
         self.snakeHead = Point(x, y)
 
-    def game_iteration(self):
+    def game_iteration(self, action):
         self.iteration += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
-        self._snake_move()
+        self._snake_move(action)
         self.snake.insert(0, self.snakeHead)
 
         finished = False
         prize = 0
-        if self.iteration > 100*len(self.snake) or self._has_collided():
+        if self.iteration > 100*len(self.snake) or self.has_collided():
             finished = True
             prize -= 10
             return finished, self.score, prize
@@ -137,3 +137,12 @@ class SNAKEGAME:
         self.display.blit(text, [self.width / 2 - text.get_width() / 2, 0])
 
         pygame.display.flip()
+
+    def get_direction(self):
+        return self.direction
+
+    def get_snake(self):
+        return self.snake
+
+    def get_food(self):
+        return self.food

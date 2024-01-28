@@ -13,7 +13,7 @@ BLUE = (65, 105, 225)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 BLOCK_SIZE = 20
-SPEED = 20
+SPEED = 600
 
 
 class Direction(Enum):
@@ -62,10 +62,10 @@ class SNAKEGAME:
         if self.food in self.snake:
             self._create_food()
 
-    def has_collided(self):
-        return (self.snakeHead.x < 0 or self.snakeHead.x > self.width - BLOCK_SIZE or
-                self.snakeHead.y < 0 or self.snakeHead.y > self.height - BLOCK_SIZE
-                or self.snakeHead in self.snake[1:])
+    def has_collided(self, snakeHead):
+        return (snakeHead.x < 0 or snakeHead.x > self.width - BLOCK_SIZE or
+                snakeHead.y < 0 or snakeHead.y > self.height - BLOCK_SIZE
+                or snakeHead in self.snake[1:])
 
     def _snake_move(self, action):
 
@@ -108,7 +108,7 @@ class SNAKEGAME:
 
         finished = False
         prize = 0
-        if self.iteration > 100*len(self.snake) or self.has_collided():
+        if self.iteration > 100*len(self.snake) or self.has_collided(self.snakeHead):
             finished = True
             prize -= 10
             return finished, self.score, prize

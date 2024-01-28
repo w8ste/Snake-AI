@@ -4,7 +4,7 @@ from collections import deque
 import numpy as np
 from environment import SNAKEGAME, Point, Direction, BLOCK_SIZE
 from matplot import plot
-
+from model import Linear_QNet, QTrainer
 LR = 0.001
 BATCH_SIZE = 1000
 
@@ -15,8 +15,8 @@ class Agent:
         self.epsilon = 0
         self.gamma = 0
         self.games_played = 0
-        # self.model = Linear_QNet(11, 256, 3)
-        # self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+        self.model = Linear_QNet(11, 256, 3)
+        self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
         self.memory = deque(maxlen=100_000)
 
     def recall(self, current_state, action, next_state, price, game_over):
@@ -41,7 +41,7 @@ class Agent:
     def long_term_memory(self):
         sample = self.memory if len(self.memory) <= BATCH_SIZE else rand.sample(self.memory, BATCH_SIZE)
         state_list, action_list, next_state_list, price_list, game_over_list = zip(*sample)
-        self.trainer.train_step(state_list, action_list, next_state_list, price_list, game_over_list)
+        self.trainer.training_step(state_list, action_list, next_state_list, price_list, game_over_list)
 
     def get_current_state(self, env):
         snake = env.get_snake()
@@ -49,7 +49,10 @@ class Agent:
 
         # determine current snake direction
         snake_direction = env.get_direction
-        direction_up, direction_right, direction_down, direction_left = self.get_snake_direction(snake_direction)
+        direction_left = env.direction == Direction.Left
+        direction_right = env.direction == Direction.Right
+        direction_up = env.direction == Direction.Up
+        direction_down = env.direction == Direction.Down
 
         food = env.get_food()
 
